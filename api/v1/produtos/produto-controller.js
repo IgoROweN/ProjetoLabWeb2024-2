@@ -1,4 +1,5 @@
-const Produto = require('./produto-model');  // Supondo que você tenha um modelo de produto configurado com o Mongoose ou Sequelize
+const Produto = require('./produto-schema');  // Supondo que você tenha um modelo de produto configurado com o Mongoose ou Sequelize
+const mongoose = require('mongoose');
 
 const ProdutoController = {
     buscar: async (request, h) => {
@@ -30,6 +31,7 @@ const ProdutoController = {
         
         try {
             const produto = new Produto({
+                id: new mongoose.Types.ObjectId().toHexString(),
                 nome,
                 descricao,
                 categoria,
@@ -41,11 +43,11 @@ const ProdutoController = {
                 peso,
                 status
             });
-
-            await produto.save();  // Salva o produto no banco de dados
+    
+            await produto.save(); // Salva o produto no banco de dados
             return h.response({ message: 'Produto cadastrado com sucesso!' }).code(201);
         } catch (err) {
-            console.error(err);
+            console.error('Erro ao cadastrar produto:', err); // Adicione o erro completo no log
             return h.response({ message: 'Erro ao cadastrar produto' }).code(500);
         }
     },
