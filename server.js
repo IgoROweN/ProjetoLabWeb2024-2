@@ -14,4 +14,21 @@ const server = Hapi.server({
 // Mapeia as rotas no servidor
 routes.forEach((path) => server.route(path));
 
+const init = async () => {
+    try {
+        await server.start();
+        console.log(`Servidor rodando na porta ${server.info.uri}`);
+    } catch (err) {
+        console.error('Erro ao iniciar o servidor:', err.message);
+        process.exit(1);
+    }
+};
+
+process.on('unhandledRejection', (err) => {
+    console.error('Erro não tratado:', err.message);
+    process.exit(1);
+});
+
+init();
+
 module.exports = server;
