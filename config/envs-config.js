@@ -2,8 +2,7 @@
 
 const dotenv = require('dotenv').config();
 
-// All configurations will extend these options
-// ============================================
+// Configurações gerais
 const all = {
     basePath: '/cms/v1',
 
@@ -11,14 +10,9 @@ const all = {
     host: process.env.HOST || '0.0.0.0',
     port: process.env.PORT || 5000,
 
-
     database: {
-        host: process.env.DATABASE_HOST,
-        port: process.env.DATABASE_PORT,
-        name: process.env.DATABASE_NAME,
-        user: process.env.DATABASE_USER,
-        password: process.env.DATABASE_PASSWORD
+        uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/labwebdb' // URI completa do MongoDB
     }
-}
+};
 
 module.exports = all;

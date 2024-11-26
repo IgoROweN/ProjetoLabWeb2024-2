@@ -1,47 +1,55 @@
-const ProdutoBusiness = require('./produto-business');
+const Produto = require('./produto-schema');
 
-const ProdutoController = {
-  cadastrar: async (req, res) => {
+// Cadastrar Produto
+exports.cadastrar = async (request, h) => {
     try {
-      const produto = await ProdutoBusiness.cadastrar(req.body);
-      res.status(201).send(produto);
-    } catch (error) {
-      res.status(400).send({ error: error.message });
+        const produto = new Produto(request.payload);
+        const result = await produto.save();
+        return h.response(result).code(201);
+    } catch (err) {
+        return h.response({ error: err.message }).code(500);
     }
-  },
-  alterar: async (req, res) => {
-    try {
-      const produto = await ProdutoBusiness.alterar(req.params.id, req.body);
-      res.send(produto);
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
-  },
-  remover: async (req, res) => {
-    try {
-      const produto = await ProdutoBusiness.remover(req.params.id);
-      res.send({ message: 'Produto removido com sucesso' });
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
-  },
-  buscarPorId: async (req, res) => {
-    try {
-      const produto = await ProdutoBusiness.buscarPorId(req.params.id);
-      res.send(produto);
-    } catch (error) {
-      res.status(404).send({ error: error.message });
-    }
-  },
-  buscar: async (req, res) => {
-    try {
-      const filtros = req.query;
-      const produtos = await ProdutoBusiness.buscar(filtros);
-      res.send(produtos);
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
-  },
 };
 
-module.exports = ProdutoController;
+// Buscar Produto por ID
+exports.buscarPorId = async (request, h) => {
+    try {
+        const produto = await Produto.findById(request.params.id);
+        if (!produto) {
+            return h.response({ message: 'Produto não encontrado' }).code(404);
+        }
+        return h.response(produto).code(200);
+    } catch (err) {
+        return h.response({ error: err.message }).code(500);
+    }
+};
+
+// Atualizar Produto
+exports.alterar = async (request, h) => {
+    try {
+        const produto = await Produto.findByIdAndUpdate(
+            request.params.id,
+            request.payload,
+            { new: true }
+        );
+        if (!produto) {
+            return h.response({ message: 'Produto não encontrado' }).code(404);
+        }
+        return h.response(produto).code(200);
+    } catch (err) {
+        return h.response({ error: err.message }).code(500);
+    }
+};
+
+// Excluir Produto
+exports.remover = async (request, h) => {
+    try {
+        const produto = await Produto.findByIdAndDelete(request.params.id);
+        if (!produto) {
+            return h.response({ message: 'Produto não encontrado' }).code(404);
+        }
+        return h.response({ message: 'Produto removido com sucesso' }).code(200);
+    } catch (err) {
+        return h.response({ error: err.message }).code(500);
+    }
+};
