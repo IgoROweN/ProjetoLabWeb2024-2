@@ -1,10 +1,10 @@
-const Produto = require('./produto-schema');  // Supondo que você tenha um modelo de produto configurado com o Mongoose ou Sequelize
+const Produto = require('./produto-schema');  
 const mongoose = require('mongoose');
 
 const ProdutoController = {
     buscar: async (request, h) => {
         try {
-            const produtos = await Produto.find();  // Exemplo de como buscar todos os produtos, adaptando ao seu modelo
+            const produtos = await Produto.find();  
             return h.response(produtos).code(200);
         } catch (err) {
             console.error(err);
@@ -15,7 +15,7 @@ const ProdutoController = {
     buscarPorId: async (request, h) => {
         const { id } = request.params;
         try {
-            const produto = await Produto.findById(id);  // Supondo que use MongoDB com Mongoose
+            const produto = await Produto.findById(id);  
             if (!produto) {
                 return h.response({ message: 'Produto não encontrado' }).code(404);
             }
@@ -47,7 +47,7 @@ const ProdutoController = {
             await produto.save(); // Salva o produto no banco de dados
             return h.response({ message: 'Produto cadastrado com sucesso!' }).code(201);
         } catch (err) {
-            console.error('Erro ao cadastrar produto:', err); // Adicione o erro completo no log
+            console.error('Erro ao cadastrar produto:', err); 
             return h.response({ message: 'Erro ao cadastrar produto' }).code(500);
         }
     },
@@ -57,7 +57,7 @@ const ProdutoController = {
         const { nome, descricao, categoria, marca, preco, quantidadeEstoque, codigoBarras, dimensoes, peso, status } = request.payload;
         
         try {
-            const produto = await Produto.findById(id);  // Busca o produto pelo ID
+            const produto = await Produto.findById(id);  
             if (!produto) {
                 return h.response({ message: 'Produto não encontrado' }).code(404);
             }
@@ -73,7 +73,7 @@ const ProdutoController = {
             produto.peso = peso || produto.peso;
             produto.status = status || produto.status;
 
-            await produto.save();  // Salva as alterações no banco de dados
+            await produto.save();  
             return h.response({ message: 'Produto alterado com sucesso!' }).code(200);
         } catch (err) {
             console.error(err);
@@ -84,7 +84,7 @@ const ProdutoController = {
     remover: async (request, h) => {
         const { id } = request.params;
         try {
-            const produto = await Produto.findById(id);  // Busca o produto pelo ID
+            const produto = await Produto.findById(id);  
             if (!produto) {
                 return h.response({ message: 'Produto não encontrado' }).code(404);
             }
@@ -98,18 +98,18 @@ const ProdutoController = {
     },
 
     buscarComFiltros: async (request, h) => {
-        const { categoria, nome } = request.query;  // Aqui estamos acessando parâmetros de query
+        const { categoria, nome } = request.query;  
         try {
-            let query = {};  // Prepara a query de filtros
+            let query = {};  
     
             if (categoria) {
-                query.categoria = categoria;  // Filtra por categoria
+                query.categoria = categoria; 
             }
             if (nome) {
-                query.nome = { $regex: nome, $options: 'i' };  // Filtra por nome (case insensitive)
+                query.nome = { $regex: nome, $options: 'i' }; 
             }
     
-            const produtos = await Produto.find(query);  // Busca os produtos no banco
+            const produtos = await Produto.find(query); 
             return h.response(produtos).code(200);
         } catch (err) {
             console.error(err);

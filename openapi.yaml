@@ -3,22 +3,22 @@ openapi: 3.0.3
 info:
   title: API de Produtos
   description: Produtos de Venda da Empresa X
-  termsOfService: http//swager.io/terms
+  termsOfService: http://swagger.io/terms
   contact:
-    email: fatec@fatecfranca.edu.br
+    email: igorowen@email.com.br
   license:
     name: Apache 2.0
-    url: http//swager.io/terms
+    url: http://swagger.io/terms
   version: 1.0.0
 
 servers:
-  - url: http://sistema-compass-homolog.com.br
-  - url: https://sistema-compass.com.br
+  - url: http://localhost:5005
 
 paths:
   /produtos:
     post:
       summary: Cadastra novos produtos
+      description: Esta rota permite cadastrar um novo produto no sistema, incluindo sua descrição, preço de custo, preço de venda e categorias associadas.
       requestBody:
         required: true
         content:
@@ -27,38 +27,166 @@ paths:
               $ref: "#/components/schemas/ProdutoRequest"
       responses:
         '201':
-          description: Sucesso cadastro produto
+          description: Produto cadastrado com sucesso
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProdutoResponse"
-                
-                
+
+  /produtos/filtros:
+    get:
+      summary: Filtra produtos por categoria e/ou nome
+      description: Esta rota permite consultar produtos filtrados por categoria e/ou nome. Você pode passar um ou ambos os parâmetros de filtro.
+      parameters:
+        - in: query
+          name: categoria
+          schema:
+            type: string
+          description: 'Categoria do produto a ser filtrado. Exemplo: "Eletrônicos"'
+        - in: query
+          name: nome
+          schema:
+            type: string
+          description: 'Nome do produto a ser filtrado. Exemplo: "Fone de Ouvido Bluetooth"'
+      responses:
+        '200':
+          description: Lista de produtos filtrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProdutoResponse"
+        '400':
+          description: Parâmetros de filtro inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Erro ao buscar produtos com filtros'
+
+  /produtos/{id}:
+    get:
+      summary: Recupera um produto por ID
+      description: Esta rota retorna os detalhes de um produto específico com base no seu ID. A resposta inclui todos os dados do produto.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID único do produto.
+      responses:
+        '200':
+          description: Detalhes do produto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProdutoResponse"
+        '404':
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Produto não encontrado'
+
+    put:
+      summary: Atualiza os dados de um produto
+      description: Esta rota permite atualizar os dados de um produto existente, como descrição, preço e categorias.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID único do produto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProdutoRequest"
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProdutoResponse"
+        '400':
+          description: Dados inválidos no corpo da requisição
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Erro ao atualizar produto'
+
+    delete:
+      summary: Remove um produto
+      description: Esta rota remove um produto do sistema pelo ID. Após a remoção, o produto não estará mais disponível.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID único do produto.
+      responses:
+        '200':
+          description: Produto removido com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Produto removido com sucesso'
+        '404':
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Produto não encontrado'
+
 components:
   schemas:
-    
     ProdutoRequest:
       type: object
       properties:
         descricao:
           type: string
-          description: Descricao do produto
+          description: Descrição do produto
           example: Geladeira
           maxLength: 100
           minLength: 5
-        preco: 
+        preco:
           type: object
           properties:
             custo:
               type: number
               format: decimal
               example: 19.99
-              description: Preço custo produto
+              description: Preço de custo do produto
             venda:
               type: number
               format: decimal
               example: 25.87
-              description: Preco de venda consumidor
+              description: Preço de venda para o consumidor
         categorias:
           type: array
           items:
@@ -77,26 +205,25 @@ components:
           example: 29394
         descricao:
           type: string
-          description: Descricao do produto
+          description: Descrição do produto
           example: Geladeira
           maxLength: 100
           minLength: 5
-        preco: 
+        preco:
           type: object
           properties:
             custo:
               type: number
               format: decimal
               example: 19.99
-              description: Preço custo produto
+              description: Preço de custo do produto
             venda:
               type: number
               format: decimal
               example: 25.87
-              description: Preco de venda consumidor
+              description: Preço de venda para o consumidor
         categorias:
           type: array
           items:
             type: string
           example: ["A", "B"]
-    
