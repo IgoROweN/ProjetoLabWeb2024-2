@@ -26,6 +26,11 @@ const routes = [
         path: '/produtos',
         handler: ProdutoController.buscar,
     },
+    {
+        method: 'GET',
+        path: '/produtos/filtros',
+        handler: ProdutoController.buscarComFiltros
+    },
 ];
 
 module.exports = routes;

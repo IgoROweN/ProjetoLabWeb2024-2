@@ -95,7 +95,29 @@ const ProdutoController = {
             console.error(err);
             return h.response({ message: 'Erro ao remover produto' }).code(500);
         }
-    }
+    },
+
+    buscarComFiltros: async (request, h) => {
+        const { categoria, nome } = request.query;
+        try {
+            // Criação da consulta de busca
+            let query = {};
+    
+            if (categoria) {
+                query.categoria = categoria;
+            }
+            if (nome) {
+                query.nome = { $regex: nome, $options: 'i' };  // Regex para busca de nome (case insensitive)
+            }
+    
+            const produtos = await Produto.find(query); // Busca os produtos no banco de dados
+            return h.response(produtos).code(200);
+        } catch (err) {
+            console.error(err);
+            return h.response({ message: 'Erro ao buscar produtos com filtros' }).code(500);
+        }
+    },
+
 };
 
 module.exports = ProdutoController;
