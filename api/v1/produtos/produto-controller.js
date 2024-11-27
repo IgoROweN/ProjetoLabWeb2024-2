@@ -31,7 +31,6 @@ const ProdutoController = {
         
         try {
             const produto = new Produto({
-                id: new mongoose.Types.ObjectId().toHexString(),
                 nome,
                 descricao,
                 categoria,
