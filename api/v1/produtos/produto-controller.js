@@ -82,18 +82,16 @@ const ProdutoController = {
     },
 
     remover: async (request, h) => {
-        const { id } = request.params;
+        const { id } = request.params;  
         try {
-            const produto = await Produto.findById(id);  
+            const produto = await Produto.findByIdAndDelete(id); 
             if (!produto) {
-                return h.response({ message: 'Produto não encontrado' }).code(404);
+                return h.response({ message: 'Produto não encontrado' }).code(404);  
             }
-
-            await produto.remove();  // Remove o produto do banco de dados
-            return h.response({ message: 'Produto removido com sucesso!' }).code(200);
-        } catch (err) {
-            console.error(err);
-            return h.response({ message: 'Erro ao remover produto' }).code(500);
+            return h.response({ message: 'Produto excluído com sucesso' }).code(200);
+        } catch (error) {
+            console.error(error);
+            return h.response({ message: 'Erro ao excluir o produto' }).code(500);  
         }
     },
 
